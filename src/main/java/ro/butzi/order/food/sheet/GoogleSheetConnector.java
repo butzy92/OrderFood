@@ -39,7 +39,7 @@ public class GoogleSheetConnector {
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         jsonFactory = JacksonFactory.getDefaultInstance();
         localServerReceiver = new LocalServerReceiver.Builder()
-                .setHost(jettyUrl)
+               // .setHost(jettyUrl)
                 .build();
     }
 
