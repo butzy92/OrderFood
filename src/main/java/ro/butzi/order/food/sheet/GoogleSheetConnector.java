@@ -5,7 +5,6 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -17,15 +16,12 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class GoogleSheetConnector {
@@ -47,7 +43,7 @@ public class GoogleSheetConnector {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, jsonFactory, clientSecrets, Arrays.asList(SheetsScopes.SPREADSHEETS, SheetsScopes.DRIVE))
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("/tokens")))
+                .setDataStoreFactory(new FileDataStoreFactory(new File("tokens")))
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver build = new LocalServerReceiver.Builder()
