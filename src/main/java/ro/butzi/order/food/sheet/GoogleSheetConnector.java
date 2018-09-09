@@ -13,6 +13,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsRequestInitializer;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -28,12 +29,18 @@ public class GoogleSheetConnector {
 
     private final NetHttpTransport httpTransport;
     private final JsonFactory jsonFactory;
+    private final LocalServerReceiver localServerReceiver;
 
 
 
-    public GoogleSheetConnector() throws GeneralSecurityException, IOException {
+    public GoogleSheetConnector(
+            @Value("${jettyCallback}")
+            String jettyUrl) throws GeneralSecurityException, IOException {
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         jsonFactory = JacksonFactory.getDefaultInstance();
+        localServerReceiver = new LocalServerReceiver.Builder()
+                .setHost(jettyUrl)
+                .build();
     }
 
     private Credential getCredentials() throws IOException {
@@ -46,10 +53,8 @@ public class GoogleSheetConnector {
                 .setDataStoreFactory(new FileDataStoreFactory(new File("tokens")))
                 .setAccessType("offline")
                 .build();
-        LocalServerReceiver build = new LocalServerReceiver.Builder()
-                .setPort(8081).build();
 
-        return new AuthorizationCodeInstalledApp(flow, build)
+        return new AuthorizationCodeInstalledApp(flow, localServerReceiver)
                 .authorize("userTest");
     }
 
